@@ -8,9 +8,9 @@ const port = process.env.SERVER_PORT;
 const host = process.env.SERVER_HOST;
 
 // Пути к сертификатам
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/grigorash.site/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/grigorash.site/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/grigorash.site/chain.pem', 'utf8');
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/grigorasch.site/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/grigorasch.site/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/grigorasch.site/chain.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // HTTPS сервер
