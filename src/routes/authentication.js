@@ -9,7 +9,14 @@ const user = await User.build({
   password: '123456',
   role: 'admin'
 });
+  try {
+     user.validate()
+  } catch (error) {
+     console.log(error);
+  }
+  
   console.log(user)
+  
   res.send('g');
 });
 
