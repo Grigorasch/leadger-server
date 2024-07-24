@@ -1,15 +1,9 @@
 require("dotenv").config();
 const sequelize = require("./config/database");
-const fs = require("fs");
+const credentials = require("./config/credentials");
 const http = require("http");
 const https = require("https");
 const app = require("./config/app");
-console.log(process.env.SSL_PRIVATE_KEY)
-// Пути к сертификатам
-const privateKey = fs.readFileSync(process.env.SSL_PRIVATE_KEY, "utf8");
-const certificate = fs.readFileSync(process.env.SSL_CERTIFICATE, "utf8");
-const ca = fs.readFileSync(process.env.SSL_CA, "utf8");
-const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // HTTPS сервер
 const httpsServer = https.createServer(credentials, app);
