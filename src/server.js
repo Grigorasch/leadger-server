@@ -4,26 +4,26 @@ const fs = require("fs");
 const http = require("http");
 const https = require("https");
 const app = require("./config/app");
-
+console.log(process.env.SSL_PRIVATE_KEY)
 // Пути к сертификатам
 const privateKey = fs.readFileSync(process.env.SSL_PRIVATE_KEY, "utf8");
 const certificate = fs.readFileSync(process.env.SSL_CERTIFICATE, "utf8");
-const ca = fs.readFileSync(process.env.CA, "utf8");
+const ca = fs.readFileSync(process.env.SSL_CA, "utf8");
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // HTTPS сервер
 const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(process.env.HTTPS_PORT, process.env.SERVER_HOST, () => {
-  console.log(`HTTPS server listening on host ${host} and port ${port}`);
+  console.log(`HTTPS server listening on host and port`);
 });
 // HTTP сервер для редиректов на HTTPS
 const httpServer = http.createServer((req, res) => {
   res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
   res.end();
 });
-httpServer.listen(process.env.HTTP_PORT, host, () => {
+httpServer.listen(process.env.HTTP_PORT, process.env.SERVER_HOST, () => {
   console.log(
-    `HTTP server listening on host ${host} and port 80 for redirection`,
+    `HTTP server listening on host and port 80 for redirection`,
   );
 });
 
