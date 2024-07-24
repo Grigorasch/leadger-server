@@ -37,26 +37,6 @@ const User = sequelize.define("User", {
       notEmpty: true,
     },
   },
-  // password_salt: {
-  //   type: DataTypes.STRING,
-  //   allowNull: false,
-  //   defaultValue: () => {
-  //     return crypto.randomBytes(16).toString("hex");
-  //   },
-  // },
-  // password_hash: {
-  //   type: DataTypes.STRING,
-  //   allowNull: false,
-  //   validate: {},
-  //   set(value) {
-  //     const password = validator.escape(value);
-  //     const salt = this.getDataValue("password_salt");
-  //     this.setDataValue(
-  //       "password_hash",
-  //       crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512").toString("hex"),
-  //     );
-  //   },
-  // },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -64,28 +44,28 @@ const User = sequelize.define("User", {
       len: [1, 30],
       isAlpha: true,
     },
-  },  {
-    hooks: {
-      beforeValidate: (user) => {
-        if (user.password !== user.password_confirmation) {
-          throw new Error('Passwords do not match');
-        }
-      },
-      beforeCreate: async (user) => {
+  },
+  hooks: {
+    beforeValidate: (user) => {
+      if (user.password !== user.password_confirmation) {
+        throw new Error("Passwords do not match");
+      }
+    },
+    beforeCreate: async (user) => {
+      const salt = await bcrypt.genSalt(10);
+      user.password_salt = salt;
+      const hash = await bcrypt.hash(user.password, salt);
+      user.password_hash = hash;
+    },
+    beforeUpdate: async (user) => {
+      if (user.changed("password")) {
         const salt = await bcrypt.genSalt(10);
         user.password_salt = salt;
         const hash = await bcrypt.hash(user.password, salt);
         user.password_hash = hash;
-      },
-      beforeUpdate: async (user) => {
-        if (user.changed('password')) {
-          const salt = await bcrypt.genSalt(10);
-          user.password_salt = salt;
-          const hash = await bcrypt.hash(user.password, salt);
-          user.password_hash = hash;
-        }
       }
-    }
+    },
+  },
 });
 
 module.exports = User;
