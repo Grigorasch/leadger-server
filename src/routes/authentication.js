@@ -22,7 +22,9 @@ const user = await User.build({
 });
 
 authRouter.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
+  const {email, password, password_confirmation, name } = req.body;
+
+  
   try {
     const user = await User.findOne({ username });
     if (user) {
