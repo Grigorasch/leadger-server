@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const validator = require("validator");
+const bcrypt = require('bcrypt');
 
 const User = sequelize.define(
   "User",
@@ -66,7 +67,10 @@ const User = sequelize.define(
         }
       },
     },
+    tableName: 'users',
+    timestamps: false,
   },
+  
 );
 
 module.exports = User;

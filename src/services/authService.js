@@ -6,7 +6,7 @@ const authService = {
     const newUserModel = User.build(newUser);
     try {
       await newUserModel.validate();
-      const existUser = await userRepositorie.findOne({email: newUserModel.email});
+      const existUser = await userRepositorie.count({email: newUserModel.email});
       if (existUser) {
         throw new Error("User with this email already exists");
       }
