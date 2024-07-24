@@ -132,3 +132,4 @@ dist
 #Other
 .ssh
 *replit*
+.vscode
