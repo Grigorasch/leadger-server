@@ -5,6 +5,16 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const User = require('../models/user');
 
+authRouter.get('/g' , async (req, res) => {
+const user = await User.build({
+  email: 'xcvkp@example.com',
+  password: '123456',
+  role: 'admin'
+});
+  console.log(user)
+  res.send('g');
+});
+
 authRouter.post('/signup', async (req, res) => {
   const { username, password } = req.body;
   try {
