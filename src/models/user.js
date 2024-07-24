@@ -36,12 +36,20 @@ const User = sequelize.define(
     password_confirmation: {
       type: DataTypes.VIRTUAL,
     },
+    password_salt: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    password_hash: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         len: [1, 30],
-        isAlpha: true,
+        is: /^[A-Za-zА-Яа-яЁё\d\-\s]+$/,
       },
     },
   },
