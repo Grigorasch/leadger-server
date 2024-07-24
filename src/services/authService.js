@@ -3,19 +3,16 @@ const userRepositorie = require("../repositories/userRepositorie");
 
 const authService = {
   async signup(newUser) {
-    const newUserModel = User.build({
-      email,
-      password,
-      password_confirmation,
-      name,
-    });
-
+    const newUserModel = User.build(newUser);
     try {
       await newUserModel.validate();
       const existUser = await userRepositorie.findOne({email: newUserModel.email});
-      console.log(existUser);
+      if (existUser) {
+        throw new Error("User with this email already exists");
+      }
+      return await userRepositorie.create(newUserModel);
     } catch(error) {
-      
+      throw error;
     }
   },
 };
