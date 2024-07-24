@@ -9,8 +9,8 @@ const userRepositorie = {
     return await User.count({ where });
   },
 
-  async create(data) {
-    return await User.create(data);
+  async create(model) {
+    return await model.save();
   },
 };
 
