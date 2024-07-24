@@ -34,11 +34,6 @@ const User = sequelize.define(
     },
     password_confirmation: {
       type: DataTypes.VIRTUAL,
-      allowNull: false,
-      validate: {
-        len: [8, 30],
-        notEmpty: true,
-      },
     },
     name: {
       type: DataTypes.STRING,

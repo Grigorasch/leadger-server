@@ -8,7 +8,7 @@ const user = await User.build({
   email: 'xcvkp@example.com',
   password: '123456',
   password_confirmation: '123456',
-  role: 'admin'
+  name: 'Григорий',
 });
   try {
     await user.validate()
