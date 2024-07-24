@@ -7,6 +7,7 @@ authRouter.get('/g' , async (req, res) => {
 const user = await User.build({
   email: 'xcvkp@example.com',
   password: '123456',
+  password_confirmation: '123456',
   role: 'admin'
 });
   try {
