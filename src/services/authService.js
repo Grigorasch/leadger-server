@@ -4,18 +4,19 @@ const userRepositorie = require("../repositories/userRepositorie");
 const authService = {
   async signup(userData) {
     try {
-      const { validateUserData, error } = UserSchema.validate(userData);
+      const { value, error } = UserSchema.validate(userData);
       if (error) {
         console.log(error);
         throw new Error(error.details[0].message);
       }
+      console.log(value);
       const existUser = await userRepositorie.count({
-        email: validateUserData.email,
+        email: value.email,
       });
       if (existUser) {
         throw new Error("User with this email already exists");
       }
-      return await userRepositorie.create(validateUserData);
+      return await userRepositorie.create(value);
     } catch (error) {
       throw error;
     }

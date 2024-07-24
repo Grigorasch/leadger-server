@@ -22,7 +22,7 @@ const User = sequelize.define(
       set(value) {
         this.setDataValue(
           "email",
-          validator.normalizeEmail(validator.escape(value)),
+          validator.normalizeEmail(validator.escape(value))
         );
       },
     },
@@ -56,16 +56,13 @@ const User = sequelize.define(
   },
   {
     hooks: {
-      beforeValidate: (user) => {
-        if (user.password !== user.password_confirmation) {
-          throw new Error("Passwords do not match");
+      beforeValidate: async (user) => {
+        if (!user.password_salt || !user.password_hash) {
+          const salt = await bcrypt.genSalt(10);
+          user.password_salt = salt;
+          const hash = await bcrypt.hash(user.password, salt);
+          user.password_hash = hash;
         }
-      },
-      beforeCreate: async (user) => {
-        const salt = await bcrypt.genSalt(10);
-        user.password_salt = salt;
-        const hash = await bcrypt.hash(user.password, salt);
-        user.password_hash = hash;
       },
       beforeUpdate: async (user) => {
         if (user.changed("password")) {
@@ -78,7 +75,7 @@ const User = sequelize.define(
     },
     tableName: "users",
     timestamps: false,
-  },
+  }
 );
 
 const UserSchema = Joi.object({
