@@ -10,7 +10,7 @@ const user = await User.build({
   role: 'admin'
 });
   try {
-     user.validate()
+    await user.validate()
   } catch (error) {
      console.log(error);
   }
