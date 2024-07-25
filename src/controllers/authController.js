@@ -1,3 +1,4 @@
+const generatePayload = require("../helpers/generatePayload");
 const authService = require("../services/authService");
 
 const authController = {
@@ -5,7 +6,9 @@ const authController = {
     const { email, password, password_confirmation, name } = req.body;
 
     try {
-      await authService.signup({ email, password, password_confirmation, name})
+      await authService.signup({ email, password, password_confirmation, name});
+      const payload = generatePayload(req);
+      const token = authService.generateToken(payload);
       res.hearder('Authorization', `Bearer ${token}`);
       res.send('ok');
     } catch (error) {

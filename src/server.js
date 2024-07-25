@@ -10,6 +10,10 @@ const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(process.env.HTTPS_PORT, process.env.SERVER_HOST, () => {
   console.log(`HTTPS server listening on host and port`);
 });
+httpsServer.on('connection', socket => {
+  socket.id = uuidv4();
+});
+
 // HTTP сервер для редиректов на HTTPS
 const httpServer = http.createServer((req, res) => {
   res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });

@@ -2,6 +2,7 @@ const UserExistError = require("../errors/UserExistError");
 const { User, UserSchema } = require("../models/user");
 const userRepositorie = require("../repositories/userRepositorie");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const authService = {
   // Сервис для регистрации пользователя
@@ -28,13 +29,29 @@ const authService = {
       password_salt,
       password_hash,
       name: userData.name,
-    })
+    });
     return await userRepositorie.create(user);
   },
 
-  async generateToken() {
-    
-  }
+  generateToken(payload) {
+    const secretKey = process.env.JWT_SECRET;
+    return jwt.sign(payload, secretKey, {
+      algorithm: process.env.JWT_ALG,
+    });
+  },
+
+  async verifyToken(token, sub) {
+    try {
+      const secretKey = process.env.JWT_SECRET;
+      const decoded = jwt.verify(token, secretKey, {
+        algorithms: [process.env.JWT_ALG],
+        subject: sub,
+      });
+      return decoded;
+    } catch (err) {
+      throw new Error("Invalid token");
+    }
+  },
 };
 
 module.exports = authService;
