@@ -1,7 +1,10 @@
 const argv = require('./boot/argv');
-console.log(argv);
-
 const configer = require('./boot/configer');
+const serverManager = require('./control/server-manager');
+
+serverManager.on(serverManager.SERVER_STATES[1], ()=> {serverManager.prepare(argv)});
+
+
 
 configer.loadConfig().then(config => {
   global.config = config
@@ -20,4 +23,8 @@ setInterval(()=>{}, 1000);
 //     console.log(`stdout: ${stdout}`);
 //     console.error(`stderr: ${stderr}`);
 // });
+
+async function main() {
+  // global.config = 
+}
 
