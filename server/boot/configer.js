@@ -4,6 +4,7 @@ const fs = require('fs');
  * @typedef {Object} Config
  * @property {number} port - Номер порта сервера.
  * @property {string} host - Имя хоста сервера.
+ * @property {boolean} autostart - Опция автозапуска сервера.
  * @property {Object} db - Конфигурация базы данных.
  * @property {string} db.host - Имя хоста базы данных.
  * @property {number} db.port - Номер порта базы данных.
@@ -16,15 +17,20 @@ const fs = require('fs');
  * @property {string} ssl.ca - Путь к цепочке сертификатов SSL.
  * @property {Object} jwt - Конфигурация JWT.
  * @property {string} jwt.alg - Алгоритм JWT.
- * @property {Object} jwt.secret - Конфигурация секрета JWT.
+ * @property {Object} jwt.secret - Секретные параметры JWT.
  * @property {string} jwt.secret.key - Ключ секрета JWT.
  * @property {string} jwt.secret.strt - Время начала действия секрета JWT.
  * @property {string} jwt.secret.exp - Время окончания действия секрета JWT.
+ * @property {Object} log - Логирование конфигурации.
+ * @property {boolean} log.enabled - Включено ли логирование.
+ * @property {Array<string>} log.level - Уровни логирования.
+ * @property {string} log.file - Путь к файлу логирования.
  */
 
 const defaultConfig = {
   port: 3000,
   host: "localhost",
+  autostart: false,
   db: {
     host: "localhost",
     port: 20724,
@@ -44,6 +50,11 @@ const defaultConfig = {
       strt: "",
       exp: ""
     }
+  },
+  log: {
+    enabled: true,
+    level: ["info", "warnig", "error", "debug"],
+    file: ".log/log.txt"
   }
 };
 
@@ -55,12 +66,12 @@ const defaultConfig = {
 const configer = {
   /**
    * Загружает конфигурацию из указанного пути и объединяет её с конфигурацией по умолчанию и ручными настройками.
-   * Если путь не указан, используется путь по умолчанию '../config.json'.
+   * Если путь не указан, используется путь по умолчанию './config.json'.
    * Ручные настройки конфигурации имеют приоритет над загруженными из файла.
    *
-   * @param {string} [path='/config.json'] - Путь к файлу конфигурации.
+   * @param {string} [path='./config.json'] - Путь к файлу конфигурации.
    * @param {Object} [manualConfig={}] - Ручные настройки конфигурации.
-   * @returns {Config} Объединённая конфигурация.
+   * @returns {Promise<Config>} Объединённая конфигурация.
    */
   loadConfig(path = './config.json', manualConfig = {}) {
     const config = { ...defaultConfig };
