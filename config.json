@@ -1,0 +1,24 @@
+{
+  "port": 443,
+  "host": "46.8.236.43",
+  "db": {
+    "host": "46.8.236.43",
+    "port": 20724,
+    "name": "leadger",
+    "user": "leadger-admin",
+    "password": "x7pJNdKXxgoN1DcS"
+  },
+  "ssl": {
+    "privateKey": "/etc/letsencrypt/live/grigorasch.site/privkey.pem",
+    "certificate": "/etc/letsencrypt/live/grigorasch.site/cert.pem",
+    "ca": "/etc/letsencrypt/live/grigorasch.site/chain.pem"
+  },
+  "jwt": {
+    "alg": "HS256",
+    "secret": {
+      "key": "$2b$31$gZ0yep0b.BV52LDfF30y.O",
+      "strt": "1516239020000",
+      "exp": "1516240022000"
+    }
+  }
+}
