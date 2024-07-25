@@ -1,9 +1,9 @@
-// const logger = {
-//   info: () => {},
-//   warning: () => {},
-//   error: () => {},
-//   debug: () => {}
-// }
+const logger = {
+  info: () => {},
+  warning: () => {},
+  error: () => {},
+  debug: () => {}
+}
 
 
-// module.exports = logger;
+module.exports = logger;

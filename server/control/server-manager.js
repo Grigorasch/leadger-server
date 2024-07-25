@@ -2,6 +2,7 @@ const { EventEmitter } = require("node:events");
 const configer = require("../boot/configer");
 const readline = require("readline");
 const logger = require("../boot/logger");
+const Event = require("../events/event");
 
 class ServerManager extends EventEmitter {
   SERVER_STATES = {
@@ -22,36 +23,32 @@ class ServerManager extends EventEmitter {
     ServerManager.instance = this;
     this.state = this.SERVER_STATES[0];
     // this.checker = setInterval(() => {}, 30000);
-}
-
-  async prepare(argv) {
-    // Получаем параметры запуска
-    const { config, manual } = argv;
-    global.config = await configer.loadConfig(config, manual);
-console.log('!!!!!!!!!!!!!!!!!!!!!')
-    // Подключаем логгирование при необходимости
-    if (global.config.log.enable) this._loggerConfig();
-    console.log('!!!!!!!!!!!!!!!!!!!!!')
 
     // Подключаем командную строку
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
     });
-    logger.info('Введите "start" для запуска сервера, "stop" для остановки сер');
+    logger.info(
+      'Введите "start" для запуска сервера, "stop" для остановки сер',
+    );
+    this.state = this.SERVER_STATES[1];
   }
 
-  _loggerConfig() {
-    const winLogger = winston.createLogger({
-      transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: global.config.log.file }),
-      ],
-    });
-    console.log(winLogger)
-    global.config.log.level.forEach(
-      (level) => (logger[level] = winLogger[level])
-    );
+  set state(state) {
+    if (!Object.values(this.SERVER_STATES).includes(state))
+      throw new Error(
+        "Неверное состояние сервера. Запрошенное состояние " + state,
+      );
+    if (this._state === state)
+      return logger.waring("Сервер уже в этом состоянии");
+    this._state = state;
+    this.emit(new Event("state", { target: this }));
+  }
+
+  emmit(event) {
+    loggger.info(`Сервер перешел в состояние ${event.name}`);
+    super.emmit(event.name, event);
   }
 }
 
