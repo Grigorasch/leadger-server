@@ -1,5 +1,4 @@
 const { EventEmitter } = require("node:events");
-const configer = require("../boot/configer");
 const readline = require("readline");
 const logger = require("../boot/logger");
 const Event = require("../events/event");
@@ -30,14 +29,14 @@ class ServerManager extends EventEmitter {
       output: process.stdout,
     });
     logger.info(
-      'Введите "start" для запуска сервера, "stop" для остановки сер',
+      'Введите "start" для запуска сервера, "stop" для остановки сер'
     );
     this.state = this.SERVER_STATES[1];
   }
 
   set state(state) {
     if (!Object.values(this.SERVER_STATES).includes(state))
-      throw new Error(
+      throw new logger.wraning(
         "Неверное состояние сервера. Запрошенное состояние " + state,
       );
     if (this._state === state)
@@ -47,7 +46,7 @@ class ServerManager extends EventEmitter {
   }
 
   emmit(event) {
-    loggger.info(`Сервер перешел в состояние ${event.name}`);
+    logger.info(`Сервер перешел в состояние ${event.name}`);
     super.emmit(event.name, event);
   }
 }
