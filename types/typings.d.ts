@@ -182,3 +182,10 @@ declare module 'common' {
   export * from 'event';
   export * from 'server-manager';
 }
+
+/**
+ * Генерирует полезную нагрузку JWT для запроса.
+ * @param {Object} req - Объект запроса.
+ * @returns {Payload} Полезная нагрузка JWT.
+ */
+declare function generatePayload(req: Request): { iss: string; sub: string; exp: number; iat: number; };
