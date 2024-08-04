@@ -1,5 +1,4 @@
 {
-  "port": 443,
   "host": "46.8.236.43",
   "autostart": "true",
   "db": {
