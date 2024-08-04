@@ -1,25 +1,22 @@
-const argv = require('./boot/argv');
-const configer = require('./boot/configer');
-const serverManager = require('./control/server-manager');
+const argv = require("yargs").argv;
+const configer = require("./boot/configer");
+const { logger, createLogger } = require("./boot/logger");
+const serverManager = require("./control/server-manager");
 
 async function main() {
   // Получаем параметры запуска
   const { config, manual } = argv;
+  // Загружаем конфигурацию
   global.config = await configer.loadConfig(config, manual);
-
-  // Подключаем логгирование при необходимости
-  if (global.config.log.enable) {
-    const winLogger = winston.createLogger({
-      transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: global.config.log.file }),
-      ],
+  // Создаем логгер
+  if (global.config.log.enabled) {
+    global.config.log.level.map((level) => {
+      preparedLogger = createLogger(level);
+      logger[level] = (message) => preparedLogger[level](message);
     });
-    console.log(winLogger);
-    global.config.log.level.forEach(
-      (level) => (logger[level] = winLogger[level])
-    );
+    logger.info("Логирование включено");
   }
+  serverManager.status = serverManager.SERVER_STATES[(global.config.autostart ? 2 : 3)];
 }
 
-main();
+main()
