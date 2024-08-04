@@ -2,6 +2,8 @@ const { EventEmitter } = require("node:events");
 const readline = require("readline");
 const logger = require("../boot/logger");
 const Event = require("../events/event");
+const httpsServer = require("../host/https.host.js");
+const httpServer = require("../host/http.host.js");
 
 class ServerManager extends EventEmitter {
   SERVER_STATES = {
@@ -12,6 +14,7 @@ class ServerManager extends EventEmitter {
     4: "running",
     5: "stopping",
     6: "paussing",
+    7: "exits",
   };
 
   constructor() {
@@ -28,9 +31,6 @@ class ServerManager extends EventEmitter {
       input: process.stdin,
       output: process.stdout,
     });
-    logger.info(
-      'Введите "start" для запуска сервера, "stop" для остановки сер'
-    );
     this.state = this.SERVER_STATES[1];
   }
 
@@ -49,8 +49,72 @@ class ServerManager extends EventEmitter {
     logger.info(`Сервер перешел в состояние ${event.name}`);
     super.emmit(event.name, event);
   }
+
+  async connectDB() {
+    if (this.db) {
+      logger.warning("DB object allready exists");
+      try {
+        await this.db.authenticate();
+        logger.warning("DB allready connected");
+        return;
+      } catch (error) {
+        logger.warning("Connection defuses", error);
+      }
+    }
+    const { name, user, password, host, port } = global.config.db;
+    this.db = await new Sequelize(name, user, password, {
+      host: host,
+      port: port,
+      dialect: "mysql",
+    });
+  }
+
+  async httpsServerStart() {
+    const { httpsPort, host } = global.config;
+    httpsServer.listen(httpsPort, host, () => {
+      console.log(`HTTPS server listening on host and port`);
+    });
+    httpsServer.on("connection", (socket) => {
+      socket.id = UUIDV4();
+    });
+  }
+
+  async httpServerStart() {
+    const { httpPort, host } = global.config;
+    httpServer.listen(httpPort, host, () => {
+      console.log(`HTTP server listening on host and port 80 for redirection`);
+    });
+  }
+
+  async start() {
+    await connectDB();
+    await httpsServerStart();
+    await httpServerStart();
+    this.state = this.SERVER_STATES[4];
+  }
+
+  async stop() {
+    await new Promise((resolve, reject) => {
+        httpServer.close(resolve);
+    });
+    await new Promise((resolve, reject) => {
+        httpsServer.close(resolve);
+    });
+  }
+
+  serverShutDown() {
+    console.log("Server is shutting down...");
+    // Add logic to gracefully shut down the server
+  }
 }
 
 const serverManager = new ServerManager();
+serverManager.on(this.SERVER_STATES[2], () => {
+  serverManager.start();
+});
+
+serverManager.on(this.SERVER_STATES[5], () => {
+  serverManager.stop();
+});
 
 module.exports = serverManager;
