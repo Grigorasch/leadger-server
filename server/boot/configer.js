@@ -28,6 +28,8 @@ const fs = require('fs');
  */
 
 const defaultConfig = {
+  httpsPort: 443,
+  httpPort: 80,
   port: 3000,
   host: "localhost",
   autostart: false,
@@ -91,7 +93,7 @@ const configer = {
       });
     });
   },
-  
+
   /**
    * Сохраняет текущую конфигурацию в указанный файл.
    * Если путь не указан, используется путь по умолчанию './config.json'.
@@ -100,7 +102,7 @@ const configer = {
    * @param {Config} config - Конфигурация для сохранения.
    * @returns {Promise<void>} Промис, резолвящийся после завершения сохранения.
    */
-  saveConfig() {}
+  saveConfig() { }
 };
 
 module.exports = configer;
