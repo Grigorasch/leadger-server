@@ -1,6 +1,6 @@
 const { EventEmitter } = require("node:events");
 const readline = require("readline");
-const logger = require("../boot/logger");
+const {logger} = require("../boot/logger");
 const Event = require("../events/event");
 const httpsServer = require("../host/https.host.js");
 const httpServer = require("../host/http.host.js");
@@ -42,12 +42,16 @@ class ServerManager extends EventEmitter {
     if (this._state === state)
       return logger.waring("Сервер уже в этом состоянии");
     this._state = state;
-    this.emit(new Event("state", { target: this }));
+    this.emit(new Event(this._state, { target: this }));
   }
 
-  emmit(event) {
+  get state() {
+    return this._state;
+  }
+
+  emit(event) {
     logger.info(`Сервер перешел в состояние ${event.name}`);
-    super.emmit(event.name, event);
+    super.emit(event.name, event);
   }
 
   async connectDB() {
@@ -72,7 +76,7 @@ class ServerManager extends EventEmitter {
   async httpsServerStart() {
     const { httpsPort, host } = global.config;
     httpsServer.listen(httpsPort, host, () => {
-      console.log(`HTTPS server listening on host and port`);
+      logger.log(`HTTPS server listening on host and port`);
     });
     httpsServer.on("connection", (socket) => {
       socket.id = UUIDV4();
@@ -82,14 +86,14 @@ class ServerManager extends EventEmitter {
   async httpServerStart() {
     const { httpPort, host } = global.config;
     httpServer.listen(httpPort, host, () => {
-      console.log(`HTTP server listening on host and port 80 for redirection`);
+      logger.log(`HTTP server listening on host and port 80 for redirection`);
     });
   }
 
   async start() {
-    await connectDB();
-    await httpsServerStart();
-    await httpServerStart();
+    await this.connectDB();
+    await this.httpsServerStart();
+    await this.httpServerStart();
     this.state = this.SERVER_STATES[4];
   }
 
@@ -103,17 +107,17 @@ class ServerManager extends EventEmitter {
   }
 
   serverShutDown() {
-    console.log("Server is shutting down...");
+    logger.log("Server is shutting down...");
     // Add logic to gracefully shut down the server
   }
 }
 
 const serverManager = new ServerManager();
-serverManager.on(this.SERVER_STATES[2], () => {
+serverManager.on(serverManager.SERVER_STATES[2], () => {
   serverManager.start();
 });
 
-serverManager.on(this.SERVER_STATES[5], () => {
+serverManager.on(serverManager.SERVER_STATES[5], () => {
   serverManager.stop();
 });
 

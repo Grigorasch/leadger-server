@@ -1,6 +1,6 @@
 const express = require('express')
 const path = require('path');
-const authRoute = require('./authentication');
+// const authRoute = require('./authentication');
 const requestCounter = require('../../boot/request-counter');
 const cookieParser = require('cookie-parser');
 
@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(cookieParser())
 
 // Маршрут для авторизации
-app.use('/auth', authRoute);
+// app.use('/auth', authRoute);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
